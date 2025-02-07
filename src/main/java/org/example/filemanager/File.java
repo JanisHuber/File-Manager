@@ -6,8 +6,9 @@ public class File {
     private String date;
     private String path;
     private boolean isDirectory;
+    private boolean isChosen = false;
 
-    public File(String name, long size, String date, String Pathl , boolean isDirectory) {
+    public File(String name, long size, String date, String path, boolean isDirectory) {
         this.name = name;
         this.size = size;
         this.date = date;
@@ -33,5 +34,13 @@ public class File {
 
     public boolean isDirectory() {
         return isDirectory;
+    }
+
+    public boolean isChosen() {
+        return isChosen;
+    }
+
+    public void setIsChosenTo(boolean isChosen) {
+        this.isChosen = isChosen;
     }
 }
