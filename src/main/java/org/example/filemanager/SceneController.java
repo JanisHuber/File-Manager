@@ -2,11 +2,13 @@ package org.example.filemanager;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -18,34 +20,40 @@ public class SceneController {
     @FXML
     private VBox vboxContainer;
     @FXML
-    private TreeView treeListView;
-    @FXML
     private TextField searchBar;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private CheckBox checkBox;
+    @FXML
+    private CheckBox lockedPath;
 
     FileController fileController = new FileController();
 
     @FXML
     private void initialize() {
-        treeListView.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (fileController.chosenFile != null) {
-                    fileController.chosenFile.setIsChosenTo(false);
-                    fileController.chosenFile = null;
-                    updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
-                }
-            }
-            });
+        vboxContainer.setVgrow(scrollPane, Priority.ALWAYS);
+
         updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
         updatePathView();
 
         searchBar.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().toString().equals("ENTER")) {
-                List<File> files = fileController.getFilesFrom(fileController.getPointer());
                 List<File> searchFiles = new ArrayList<>();
-                for (File file : files) {
-                    if (file.getName().contains(searchBar.getText())) {
-                        searchFiles.add(file);
+                if (checkBox.isSelected())
+                {
+                    String path = (lockedPath.isSelected()) ? null : "C:\\";
+
+                    searchFiles = fileController.deepSearchForFiles(searchBar.getText(), path);
+
+                }
+                else
+                {
+                    List<File> files = fileController.getFilesFrom(fileController.getPointer());
+                    for (File file : files) {
+                        if (file.getName().contains(searchBar.getText())) {
+                            searchFiles.add(file);
+                        }
                     }
                 }
                 updateTreeView(searchFiles);

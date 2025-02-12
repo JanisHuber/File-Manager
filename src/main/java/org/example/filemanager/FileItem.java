@@ -9,6 +9,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
+import java.awt.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 public class FileItem {
     FileController fileController;
 
@@ -52,6 +58,15 @@ public class FileItem {
                         fileController.setPointer(fileController.getPointer() + fileName + "\\");
                         sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
                         sceneController.updatePathView();
+                    } else {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop desktop = Desktop.getDesktop();
+                            try {
+                                desktop.open(new java.io.File(filepath + "\\" + fileName));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 } else {
                     if (fileController.chosenFile != null) {
@@ -62,6 +77,7 @@ public class FileItem {
                             return;
                         }
                     }
+
                     fileController.chosenFile = new File(fileName, 0, fileDate, filepath, isDirectory);
                     fileController.chosenFile.setIsChosenTo(true);
                     sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));

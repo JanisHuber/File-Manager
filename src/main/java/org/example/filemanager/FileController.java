@@ -1,10 +1,18 @@
 package org.example.filemanager;
 
 import java.io.IOException;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import java.nio.file.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileController {
     private String pointer;
@@ -25,7 +33,8 @@ public class FileController {
             Path originPath = Paths.get(path);
             Files.list(originPath).forEach(originFile -> {
                 try {
-                    File file = new File(originFile.getFileName().toString(), Files.size(originPath), Files.getLastModifiedTime(originPath).toString() , originPath.toString(), (Files.isDirectory(originFile)));
+                    String formattedTime = convertToLocalDateTime(Files.getLastModifiedTime(originFile).toString());
+                    File file = new File(originFile.getFileName().toString(), Files.size(originPath), formattedTime , originPath.toString(), (Files.isDirectory(originFile)));
                     files.add(file);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -101,7 +110,7 @@ public class FileController {
         try {
             Files.move(file, newFilePath);
         } catch (FileAlreadyExistsException e) {
-            System.out.println("Ordner existiert bereits: " + newFilePath.toAbsolutePath());
+            System.out.println("Name ist bereits vergeben: " + newFilePath.toAbsolutePath());
         } catch (Exception e) {
             System.err.println("Fehler: " + e.getMessage());
         }
@@ -142,5 +151,83 @@ public class FileController {
 
     public void updateFilesList() {
         List<File> files = getFilesFrom(pointer);
+    }
+
+    public List<File> deepSearchForFiles(String name, String originPath) {
+        List<File> treeFiles = new ArrayList<>();
+        Path startPath;
+        Pattern pattern = Pattern.compile(name, Pattern.CASE_INSENSITIVE);
+
+        if (originPath == null) {
+            startPath = Paths.get(pointer);
+        } else {
+            startPath = Paths.get(originPath);
+        }
+
+        try {
+            Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (file.getFileName().toString().contains(name)) {
+                        String formattedTime = convertToLocalDateTime(Files.getLastModifiedTime(file).toString());
+                        treeFiles.add(new File(file.getFileName().toString(), file.toFile().length(), formattedTime, file.toString(), false));
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    if (dir.getFileName() == null) {
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    Matcher matcher = pattern.matcher(dir.getFileName().toString());
+                    if (matcher.find()) {
+
+                        Path timePath = Paths.get(dir.toString());
+                        String formattedTime = convertToLocalDateTime(Files.getLastModifiedTime(timePath).toString());
+                        treeFiles.add(new File(dir.getFileName().toString(), dir.toFile().length(), formattedTime, dir.toString(), true));
+
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+            });
+        } catch (IOException e) {
+            System.err.println("Error traversing directory: " + e.getMessage());
+        }
+        List<File> result = sortFilesSearch(treeFiles, name);
+        return result;
+    }
+
+    public List<File> sortFilesSearch(List<File> originFiles, String name) {
+        LinkedList<File> sortedFiles = new LinkedList<>();
+
+        for (File file : originFiles) {
+            String nameRemains = file.getName(). replace(name, "");
+
+            if (nameRemains.isEmpty()) {
+                sortedFiles.addFirst(file);
+                System.out.println("Adding: " + file.getName());
+            }
+            if (nameRemains.startsWith(".")) {
+                sortedFiles.addLast(file);
+            }
+        }
+        System.out.println("Sorted Files: " + sortedFiles.size());
+        originFiles.removeAll(sortedFiles);
+        sortedFiles.addAll(originFiles);
+
+        return sortedFiles;
+    }
+
+    public String convertToLocalDateTime(String time) {
+        Instant instant = Instant.parse(time);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+        return localDateTime.format(formatter);
     }
 }
