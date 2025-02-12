@@ -8,6 +8,8 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class SceneController {
@@ -30,27 +32,30 @@ public class SceneController {
                 if (fileController.chosenFile != null) {
                     fileController.chosenFile.setIsChosenTo(false);
                     fileController.chosenFile = null;
-                    updateTreeView();
+                    updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
                 }
             }
             });
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
         updatePathView();
 
         searchBar.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().toString().equals("ENTER")) {
-                File file = fileController.searchForFile(searchBar.getText());
-                vboxContainer.getChildren().clear();
-                vboxContainer.getChildren().add(FileItem.createFileItem(file.getName(), file.getPath(), file.getDate(), file.isDirectory(), fileController, this));
-
+                List<File> files = fileController.getFilesFrom(fileController.getPointer());
+                List<File> searchFiles = new ArrayList<>();
+                for (File file : files) {
+                    if (file.getName().contains(searchBar.getText())) {
+                        searchFiles.add(file);
+                    }
+                }
+                updateTreeView(searchFiles);
             }
         });
     }
 
     @FXML
-    public void updateTreeView() {
+    public void updateTreeView(List<File> files) {
         vboxContainer.getChildren().clear();
-        List<File> files = fileController.getFilesFrom(fileController.getPointer());
 
         for (File file : files) {
             vboxContainer.getChildren().add(FileItem.createFileItem(file.getName(), file.getPath(), file.getDate(), file.isDirectory(), fileController, this));
@@ -83,7 +88,7 @@ public class SceneController {
                     fileController.chosenFile = null;
                 }
 
-                updateTreeView();
+                updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
             }
         });
     }
@@ -95,7 +100,7 @@ public class SceneController {
             fileController.chosenFile.setIsChosenTo(false);
             fileController.chosenFile = null;
         }
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
         updatePathView();
     }
 
@@ -106,7 +111,7 @@ public class SceneController {
             fileController.chosenFile.setIsChosenTo(false);
             fileController.chosenFile = null;
         }
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
         updatePathView();
     }
 
@@ -114,14 +119,14 @@ public class SceneController {
     public void createNewFolder() {
         String directoryName = AskForNaming.askForDirectoryName();
         fileController.makeDirectory(fileController.getPointer(), directoryName);
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
     }
 
     @FXML
     public void createNewFile() {
         String fileName = AskForNaming.askForFileName();
         fileController.makeFile(fileController.getPointer(), fileName);
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
     }
 
 
@@ -136,7 +141,7 @@ public class SceneController {
                 fileController.renameFile(fileController.chosenFile.getPath(), newFileName);
             }
         }
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
     }
 
     @FXML
@@ -144,7 +149,7 @@ public class SceneController {
         if (fileController.chosenFile != null) {
             fileController.deleteFile(fileController.chosenFile.getPath());
         }
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
     }
 
     @FXML
@@ -152,12 +157,12 @@ public class SceneController {
         if (fileController.chosenFile != null) {
             fileController.copyFile(fileController.chosenFile.getPath());
         }
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
     }
 
     @FXML
     public void pasteFile() {
         fileController.pasteFile();
-        updateTreeView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
     }
 }

@@ -50,7 +50,7 @@ public class FileItem {
                             fileController.chosenFile = null;
                         }
                         fileController.setPointer(fileController.getPointer() + fileName + "\\");
-                        sceneController.updateTreeView();
+                        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
                         sceneController.updatePathView();
                     }
                 } else {
@@ -58,13 +58,13 @@ public class FileItem {
                         fileController.chosenFile.setIsChosenTo(false);
                         if (fileController.chosenFile.getName().equals(fileName)) {
                             fileController.chosenFile = null;
-                            sceneController.updateTreeView();
+                            sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
                             return;
                         }
                     }
                     fileController.chosenFile = new File(fileName, 0, fileDate, filepath, isDirectory);
                     fileController.chosenFile.setIsChosenTo(true);
-                    sceneController.updateTreeView();
+                    sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
                 }
             }
         });
