@@ -1,4 +1,4 @@
-import org.example.filemanager.FileController;
+import org.example.filemanager.filehandling.FileController;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

@@ -1,11 +1,11 @@
-package org.example.filemanager;
+package org.example.filemanager.UI;
 
 import javafx.scene.control.TextInputDialog;
 
 import java.util.Optional;
 
-public class AskForNaming {
-    public static String askForDirectoryName() {
+public class NameDialog {
+    public static String directoryName() {
         TextInputDialog dialog = new TextInputDialog("NeuerOrdner");
         dialog.setTitle("Ordner erstellen");
         dialog.setHeaderText("Gib den Namen des neuen Ordners ein:");
@@ -15,7 +15,7 @@ public class AskForNaming {
         return result.orElse(null);
     }
 
-    public static String askForFileName() {
+    public static String fileName() {
         TextInputDialog dialog = new TextInputDialog("Neues Dokument");
         dialog.setTitle("Dokument erstellen");
         dialog.setHeaderText("Gib den Namen des neuen Dokumentes ein:");
@@ -26,7 +26,7 @@ public class AskForNaming {
     }
 
 
-    public static String askForDirectoryRename(String directoryName) {
+    public static String directoryRename(String directoryName) {
         TextInputDialog dialog = new TextInputDialog(directoryName);
         dialog.setTitle("Ordner umbennen");
         dialog.setHeaderText("Gib den neuen Namen des Ordners ein:");
@@ -36,7 +36,7 @@ public class AskForNaming {
         return result.orElse(null);
     }
 
-    public static String askForFileRename(String fileName) {
+    public static String fileRename(String fileName) {
         TextInputDialog dialog = new TextInputDialog(fileName);
         dialog.setTitle("Dokument umbennenen");
         dialog.setHeaderText("Gib den neuen Namen des Dokumentes ein:");

@@ -1,14 +1,16 @@
-package org.example.filemanager;
+package org.example.filemanager.filehandling;
+
+import java.nio.file.Path;
 
 public class File {
     private String name;
     private long size;
     private String date;
-    private String path;
+    private Path path;
     private boolean isDirectory;
     private boolean isChosen = false;
 
-    public File(String name, long size, String date, String path, boolean isDirectory) {
+    public File(String name, long size, String date, Path path, boolean isDirectory) {
         this.name = name;
         this.size = size;
         this.date = date;
@@ -28,7 +30,7 @@ public class File {
         return date;
     }
 
-    public String getPath() {
+    public Path getPath() {
         return path;
     }
 
