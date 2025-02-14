@@ -104,10 +104,10 @@ public class SceneController {
             if (event.getCode().toString().equals("ENTER")) {
                 fileController.navigateTo(Paths.get(pathFieldView.getText()));
 
-                if (fileController.chosenFile != null) {
-                    fileController.chosenFile.setIsChosenTo(false);
-                    fileController.chosenFile = null;
-                }
+                fileController.getChosenFile().ifPresent(file -> {
+                    fileController.getChosenFile().get().setIsChosenTo(false);
+                    fileController.setChosenFile(null);
+                });
                 updateTreeView(fileController.getFilesFromPointer());
             }
         });

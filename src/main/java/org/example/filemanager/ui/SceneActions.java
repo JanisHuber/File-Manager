@@ -3,6 +3,8 @@ package org.example.filemanager.ui;
 import javafx.fxml.FXML;
 import org.example.filemanager.filehandling.FileController;
 
+import java.util.Optional;
+
 public class SceneActions {
     FileController fileController;
     SceneController sceneController;
@@ -29,46 +31,54 @@ public class SceneActions {
 
     @FXML
     public void createNewFolder() {
-        String directoryName = NameDialog.directoryName();
-        fileController.makeDirectoryInCurrentFolder(directoryName);
-        sceneController.updateTreeView(fileController.getFilesFromPointer());
+        Optional<String> directoryName = NameDialog.directoryName();
+        directoryName.ifPresent(dir -> {
+            fileController.makeDirectoryInCurrentFolder(dir);
+            sceneController.updateTreeView(fileController.getFilesFromPointer());
+        });
     }
 
     @FXML
     public void createNewFile() {
-        String fileName = NameDialog.fileName();
-        fileController.makeFileInCurrentFolder(fileName);
-        sceneController.updateTreeView(fileController.getFilesFromPointer());
+        Optional<String> fileName = NameDialog.fileName();
+        fileName.ifPresent(dir -> {
+            fileController.makeFileInCurrentFolder(dir);
+            sceneController.updateTreeView(fileController.getFilesFromPointer());
+        });
     }
 
 
     @FXML
     public void renameFile() {
-        if (fileController.chosenFile != null) {
-            if (fileController.chosenFile.isDirectory()) {
-                String newDirectoryName = NameDialog.directoryRename(fileController.chosenFile.getName());
-                fileController.renameFile(fileController.chosenFile.getPath(), newDirectoryName);
+        fileController.getChosenFile().ifPresent(file -> {
+            if (fileController.getChosenFile().get().isDirectory()) {
+                Optional<String> newDirectoryName = NameDialog.directoryRename(fileController.getChosenFile().get().getName());
+                newDirectoryName.ifPresent(dir -> {
+                    fileController.renameFile(fileController.getChosenFile().get().getPath(), dir);
+                });
             } else {
-                String newFileName = NameDialog.fileRename(fileController.chosenFile.getName());
-                fileController.renameFile(fileController.chosenFile.getPath(), newFileName);
+                Optional<String> newFileName = NameDialog.fileRename(fileController.getChosenFile().get().getName());
+                newFileName.ifPresent(dir -> {
+                    fileController.renameFile(fileController.getChosenFile().get().getPath(), dir);
+                });
             }
-        }
+        });
         sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     @FXML
     public void deleteFile() {
-        if (fileController.chosenFile != null) {
-            fileController.deleteFile(fileController.chosenFile.getPath());
-        }
+        fileController.getChosenFile().ifPresent(file -> {
+            fileController.deleteFile(fileController.getChosenFile().get().getPath());
+        });
         sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     @FXML
     public void copyFile() {
-        if (fileController.chosenFile != null) {
-            fileController.copyFile(fileController.chosenFile.getPath());
-        }
+        fileController.getChosenFile().ifPresent(file -> {
+            fileController.copyFile(fileController.getChosenFile().get().getPath());
+        });
         sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
@@ -79,9 +89,9 @@ public class SceneActions {
     }
 
     private void resetChosenFile() {
-        if (fileController.chosenFile != null) {
-            fileController.chosenFile.setIsChosenTo(false);
-            fileController.chosenFile = null;
-        }
+        fileController.getChosenFile().ifPresent(file -> {
+            fileController.getChosenFile().get().setIsChosenTo(false);
+            fileController.setChosenFile(null);
+        });
     }
 }

@@ -15,21 +15,21 @@ public class FileRenameTest {
     void testRename() {
         FileController fileController = new FileController();
 
-        fileController.navigateTo(Paths.get("C:\\Users\\janis\\Documents\\"));
-        fileController.makeFile(fileController.getPointer(), "test.txt");
+        fileController.navigateTo(Paths.get("C:\\Users\\janis\\ChessApp\\"));
+        fileController.makeFileInCurrentFolder("\\test.txt");
 
-        fileController.getFilesFrom(Paths.get("C:\\Users\\janis\\Documents\\"));
-        List<File> files = fileController.search(SearchMethod.NIO, "test.txt", 1);
-        fileController.chosenFile = files.get(0);
-        fileController.chosenFile.setIsChosenTo(true);
+        fileController.getFilesFrom(Paths.get("C:\\Users\\janis\\ChessApp\\"));
+        List<File> files = fileController.search(SearchMethod.NIO, "test.txt", 1, fileController.getPointer());
+        fileController.setChosenFile(files.get(0));
+        fileController.getChosenFile().get().setIsChosenTo(true);
 
         fileController.renameFile(fileController.getPointer(), "test2.txt");
 
-        assertNotNull(fileController.search(SearchMethod.NIO, "test2.txt", 0), "File should be renamed to test2.txt");
+        assertNotNull(fileController.search(SearchMethod.NIO, "test2.txt", 0, fileController.getPointer()), "File should be renamed to test2.txt");
 
-        List<File> files2 = fileController.search(SearchMethod.NIO, "test.txt", 1);
-        fileController.chosenFile = files2.get(0);
-        fileController.chosenFile.setIsChosenTo(true);
+        List<File> files2 = fileController.search(SearchMethod.NIO, "test2.txt", 1, fileController.getPointer());
+        fileController.setChosenFile(files2.get(0));
+        fileController.getChosenFile().get().setIsChosenTo(true);
         fileController.deleteFile(fileController.getPointer());
     }
 

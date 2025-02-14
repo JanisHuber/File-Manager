@@ -7,10 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 
 public class FileController {
-    public File chosenFile = null;
+    private File chosenFile = null;
     private Path copyFileSourcePath = null;
     private PointerHistory pointerHistory;
     private File copyFile = null;
@@ -20,6 +21,14 @@ public class FileController {
         this.pointerHistory = new PointerHistory(this);
         pointerHistory.setPointer(Paths.get("C:\\"));
         folderFiles = new FolderFiles(this);
+    }
+
+    public Optional<File> getChosenFile() {
+        return Optional.ofNullable(chosenFile);
+    }
+
+    public void setChosenFile(File chosenFile) {
+        this.chosenFile = chosenFile;
     }
 
     public Path getPointer() {
@@ -39,7 +48,7 @@ public class FileController {
     }
 
     public void navigateTo(Path pointer) {
-        if (pointer != null && !pointer.endsWith("\\")) {
+        if (!pointer.endsWith("\\")) {
             pointer = Paths.get(pointer + "\\");
         }
         pointerHistory.setPointer(pointer);

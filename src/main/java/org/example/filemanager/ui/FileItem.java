@@ -33,9 +33,11 @@ public class FileItem {
 
         HBox fileItemBox = new HBox(10, imageView, nameLabel, spacer, dateLabel);
 
-        if (fileController.chosenFile != null && fileController.chosenFile.getName().equals(file.getName())) {
-            fileItemBox.setStyle("-fx-background-color: #6ba2c9;");
-        }
+        fileController.getChosenFile().ifPresent(chosenFile -> {
+            if (chosenFile.getName().equals(file.getName())) {
+                fileItemBox.setStyle("-fx-background-color: #6ba2c9;");
+            }
+        });
 
         fileItemBox.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             if (event.getClickCount() == 1) {

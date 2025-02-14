@@ -32,10 +32,10 @@ public class FileItemActions {
     }
 
     private boolean fileIsAlreadyChosen(File file) {
-        if (fileController.chosenFile == null) {
+        if (!fileController.getChosenFile().isPresent()) {
             return false;
         }
-        return file.equals(fileController.chosenFile);
+        return fileController.getChosenFile().get().equals(file);
     }
 
     private void navigateToDirectory(File file) {
@@ -44,16 +44,16 @@ public class FileItemActions {
     }
 
     private void deselectFile() {
-        if (fileController.chosenFile != null) {
-            fileController.chosenFile.setIsChosenTo(false);
-            fileController.chosenFile = null;
+        fileController.getChosenFile().ifPresent(file -> {
+            fileController.getChosenFile().get().setIsChosenTo(false);
+            fileController.setChosenFile(null);
             sceneController.updateTreeView(fileController.getFilesFromPointer());
-        }
+        });
     }
 
     private void selectFile(File file) {
-        fileController.chosenFile = new File(file.getName(), file.getSize(), file.getDate(), file.getPath(), file.isDirectory());
-        fileController.chosenFile.setIsChosenTo(true);
+        fileController.setChosenFile(new File(file.getName(), file.getSize(), file.getDate(), file.getPath(), file.isDirectory()));
+        fileController.getChosenFile().ifPresent(f -> f.setIsChosenTo(true));
         fileController.navigateTo(file.getPath());
         sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
