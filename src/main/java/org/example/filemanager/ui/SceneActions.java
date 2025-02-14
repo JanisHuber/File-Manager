@@ -1,4 +1,4 @@
-package org.example.filemanager.UI;
+package org.example.filemanager.ui;
 
 import javafx.fxml.FXML;
 import org.example.filemanager.filehandling.FileController;
@@ -15,24 +15,16 @@ public class SceneActions {
 
     @FXML
     public void navigateBackwards() {
-        fileController.setPointer(fileController.getPointerBackwards());
-        if (fileController.chosenFile != null) {
-            fileController.chosenFile.setIsChosenTo(false);
-            fileController.chosenFile = null;
-        }
+        fileController.setPointer(fileController.getPointerBackwards()); //todo
+        resetChosenFile();
         sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
-        sceneController.updatePathView();
     }
 
     @FXML
     public void navigateForwards() {
         fileController.setPointer(fileController.getPointerForward());
-        if (fileController.chosenFile != null) {
-            fileController.chosenFile.setIsChosenTo(false);
-            fileController.chosenFile = null;
-        }
+        resetChosenFile();
         sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
-        sceneController.updatePathView();
     }
 
     @FXML
@@ -84,5 +76,12 @@ public class SceneActions {
     public void pasteFile() {
         fileController.pasteFile();
         sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+    }
+
+    private void resetChosenFile() {
+        if (fileController.chosenFile != null) {
+            fileController.chosenFile.setIsChosenTo(false);
+            fileController.chosenFile = null;
+        }
     }
 }

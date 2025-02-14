@@ -1,6 +1,7 @@
 package org.example.filemanager.filehandling;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class File {
     private String name;
@@ -16,6 +17,18 @@ public class File {
         this.date = date;
         this.path = path;
         this.isDirectory = isDirectory;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        File file = (File) o;
+        return size == file.size && isDirectory == file.isDirectory && Objects.equals(name, file.name) && Objects.equals(date, file.date) && Objects.equals(path, file.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, size, date, path, isDirectory);
     }
 
     public String getName() {

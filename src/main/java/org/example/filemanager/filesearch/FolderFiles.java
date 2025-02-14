@@ -12,7 +12,6 @@ import java.util.List;
 
 public class FolderFiles {
     FileController fileController;
-    List<File> currentFiles = new ArrayList<>();
 
     public FolderFiles(FileController fileController) {
         this.fileController = fileController;
@@ -36,8 +35,8 @@ public class FolderFiles {
         }
         List<File> sortedFiles = getSortedDirectorys(files);
 
-        currentFiles.clear();
-        currentFiles.addAll(sortedFiles);
+        fileController.currentFiles.clear();
+        fileController.currentFiles.addAll(sortedFiles);
         return sortedFiles;
     }
 

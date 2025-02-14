@@ -9,8 +9,8 @@ module org.example.filemanager {
 
     opens org.example.filemanager to javafx.fxml;
     exports org.example.filemanager;
-    exports org.example.filemanager.UI;
-    opens org.example.filemanager.UI to javafx.fxml;
+    exports org.example.filemanager.ui;
+    opens org.example.filemanager.ui to javafx.fxml;
     exports org.example.filemanager.filesearch;
     opens org.example.filemanager.filesearch to javafx.fxml;
     exports org.example.filemanager.filehandling;

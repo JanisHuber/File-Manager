@@ -12,7 +12,7 @@ import java.util.List;
 
 public class FileController {
     public File chosenFile = null;
-    List<File> currentFiles = new ArrayList<>();
+    public List<File> currentFiles = new ArrayList<>();
     private Path copyFileSourcePath = null;
     private PointerHistory pointerHistory;
     private File copyFile = null;
@@ -108,15 +108,6 @@ public class FileController {
         } catch (Exception e) {
             System.err.println("Fehler: " + e.getMessage());
         }
-    }
-
-    public File searchForFile(String name) {
-        for (File file : currentFiles) {
-            if (file.getName().equals(name)) {
-                return file;
-            }
-        }
-        return null;
     }
 
     public List<File> search(SearchMethod searchMethod, String searchQuery, int depth) {

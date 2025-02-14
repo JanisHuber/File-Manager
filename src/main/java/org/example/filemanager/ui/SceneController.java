@@ -1,4 +1,4 @@
-package org.example.filemanager.UI;
+package org.example.filemanager.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -10,12 +10,12 @@ import org.example.filemanager.filesearch.SearchMethod;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SceneController {
     FileController fileController = new FileController();
     SceneActions sceneactions = new SceneActions(this, fileController);
+    FileItem fileItem = new FileItem(fileController, this);
     @FXML
     private TextField pathFieldView;
     @FXML
@@ -71,26 +71,15 @@ public class SceneController {
 
     @FXML
     private void initialize() {
-        updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
-        updatePathView();
+        updateTreeView(fileController.getFilesFrom(fileController.getPointer())); //Todo
 
         searchBar.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().toString().equals("ENTER")) {
-                List<File> searchFiles = new ArrayList<>();
-                if (deepsearch.isSelected()) {
-                    fileController.setPointer((lockedPath.isSelected()) ? fileController.getPointer() : Paths.get("C:\\"));
-                    if (recursiveSearch.isSelected()) {
-                        searchFiles = fileController.search(SearchMethod.RECURSIVE, searchBar.getText(), Integer.MAX_VALUE);
-                    } else {
-                        searchFiles = fileController.search(SearchMethod.NIO, searchBar.getText(), Integer.MAX_VALUE);
-                    }
-                } else {
-                    if (recursiveSearch.isSelected()) {
-                        searchFiles = fileController.search(SearchMethod.RECURSIVE, searchBar.getText(), 4);
-                    } else {
-                        searchFiles = fileController.search(SearchMethod.NIO, searchBar.getText(), 2);
-                    }
-                }
+                fileController.setPointer((lockedPath.isSelected()) ? fileController.getPointer() : Paths.get("C:\\"));
+
+                SearchMethod searchMethod = recursiveSearch.isSelected() ? SearchMethod.RECURSIVE : SearchMethod.NIO;
+                int depth = deepsearch.isSelected() ? Integer.MAX_VALUE : 3;
+                List<File> searchFiles = fileController.search(searchMethod, searchBar.getText(), depth);
                 updateTreeView(searchFiles);
             }
         });
@@ -101,7 +90,10 @@ public class SceneController {
         vboxContainer.getChildren().clear();
 
         for (File file : files) {
-            vboxContainer.getChildren().add(FileItem.createFileItem(file.getName(), file.getPath(), file.getDate(), file.isDirectory(), fileController, this));
+            vboxContainer.getChildren().add(fileItem.createFileItem(file));
+        }
+        if (!pathFieldView.getText().equals(fileController.getPointer().toString())) {
+            updatePathView();
         }
     }
 
@@ -110,9 +102,9 @@ public class SceneController {
         pathFieldView.setText(fileController.getPointer().toString());
         pathFieldView.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().toString().equals("ENTER")) {
-
                 Path nextPointer = fileController.getPointerForward();
-                if (!nextPointer.equals(pathFieldView.getText())) {
+
+                if (!nextPointer.equals(Paths.get(pathFieldView.getText()))) {
                     fileController.removePointersAtIndex(fileController.getPointerHistory().indexOf(fileController.getPointer()));
                 }
 

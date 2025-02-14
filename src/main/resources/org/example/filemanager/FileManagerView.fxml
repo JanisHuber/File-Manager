@@ -8,7 +8,7 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
             minWidth="-Infinity"
             prefHeight="804.0" prefWidth="1199.0" xmlns="http://javafx.com/javafx/23.0.1"
-            fx:controller="org.example.filemanager.UI.SceneController">
+            fx:controller="org.example.filemanager.ui.SceneController">
     <children>
         <TextField id="ScenePath" fx:id="pathFieldView" layoutX="109.0" layoutY="59.0" opacity="0.5" prefHeight="26.0"
                    prefWidth="947.0" style="-fx-background-color: grey;" AnchorPane.leftAnchor="109.0"
