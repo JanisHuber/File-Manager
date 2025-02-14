@@ -15,7 +15,7 @@ public class FileRenameTest {
     void testRename() {
         FileController fileController = new FileController();
 
-        fileController.setPointer(Paths.get("C:\\Users\\janis\\Documents\\"));
+        fileController.navigateTo(Paths.get("C:\\Users\\janis\\Documents\\"));
         fileController.makeFile(fileController.getPointer(), "test.txt");
 
         fileController.getFilesFrom(Paths.get("C:\\Users\\janis\\Documents\\"));

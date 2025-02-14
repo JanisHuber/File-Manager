@@ -4,7 +4,6 @@ import org.example.filemanager.filehandling.File;
 import org.example.filemanager.filehandling.FileController;
 
 import java.awt.*;
-import java.nio.file.Path;
 
 public class FileItemActions {
     FileController fileController;
@@ -40,29 +39,23 @@ public class FileItemActions {
     }
 
     private void navigateToDirectory(File file) {
-        Path NextPointer = fileController.getPointerForward();
-
-        if (!NextPointer.equals(file.getPath().resolve(file.getName()))) {
-            fileController.removePointersAtIndex(fileController.getPointerHistory().indexOf(fileController.getPointer()));
-        }
-
-        fileController.setPointer(file.getPath().resolve(file.getName()));
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        fileController.navigateTo(file.getPath().resolve(file.getName()));
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     private void deselectFile() {
         if (fileController.chosenFile != null) {
             fileController.chosenFile.setIsChosenTo(false);
             fileController.chosenFile = null;
-            sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+            sceneController.updateTreeView(fileController.getFilesFromPointer());
         }
     }
 
     private void selectFile(File file) {
         fileController.chosenFile = new File(file.getName(), file.getSize(), file.getDate(), file.getPath(), file.isDirectory());
         fileController.chosenFile.setIsChosenTo(true);
-        fileController.setPointer(file.getPath());
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        fileController.navigateTo(file.getPath());
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     private void openFile(File file) {

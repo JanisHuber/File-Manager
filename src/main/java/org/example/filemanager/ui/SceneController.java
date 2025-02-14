@@ -71,15 +71,15 @@ public class SceneController {
 
     @FXML
     private void initialize() {
-        updateTreeView(fileController.getFilesFrom(fileController.getPointer())); //Todo
+        updateTreeView(fileController.getFilesFromPointer());
 
         searchBar.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().toString().equals("ENTER")) {
-                fileController.setPointer((lockedPath.isSelected()) ? fileController.getPointer() : Paths.get("C:\\"));
-
                 SearchMethod searchMethod = recursiveSearch.isSelected() ? SearchMethod.RECURSIVE : SearchMethod.NIO;
                 int depth = deepsearch.isSelected() ? Integer.MAX_VALUE : 3;
-                List<File> searchFiles = fileController.search(searchMethod, searchBar.getText(), depth);
+                Path path = lockedPath.isSelected() ? fileController.getPointer() : Paths.get("C:\\");
+
+                List<File> searchFiles = fileController.search(searchMethod, searchBar.getText(), depth, path);
                 updateTreeView(searchFiles);
             }
         });
@@ -102,21 +102,13 @@ public class SceneController {
         pathFieldView.setText(fileController.getPointer().toString());
         pathFieldView.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode().toString().equals("ENTER")) {
-                Path nextPointer = fileController.getPointerForward();
+                fileController.navigateTo(Paths.get(pathFieldView.getText()));
 
-                if (!nextPointer.equals(Paths.get(pathFieldView.getText()))) {
-                    fileController.removePointersAtIndex(fileController.getPointerHistory().indexOf(fileController.getPointer()));
-                }
-
-                fileController.setPointer(Paths.get(pathFieldView.getText()));
-                if (!fileController.getPointer().endsWith("\\")) {
-                    fileController.setPointer(Paths.get(fileController.getPointer() + "\\"));
-                }
                 if (fileController.chosenFile != null) {
                     fileController.chosenFile.setIsChosenTo(false);
                     fileController.chosenFile = null;
                 }
-                updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+                updateTreeView(fileController.getFilesFromPointer());
             }
         });
     }

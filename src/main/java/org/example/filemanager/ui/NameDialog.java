@@ -28,6 +28,6 @@ public class NameDialog {
         dialog.setContentText(content);
 
         Optional<String> result = dialog.showAndWait();
-        return result.orElse(null);
+        return result.orElse(null); //todo
     }
 }

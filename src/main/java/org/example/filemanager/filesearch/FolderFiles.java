@@ -33,11 +33,7 @@ public class FolderFiles {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<File> sortedFiles = getSortedDirectorys(files);
-
-        fileController.currentFiles.clear();
-        fileController.currentFiles.addAll(sortedFiles);
-        return sortedFiles;
+        return getSortedDirectorys(files);
     }
 
     public List<File> getSortedDirectorys(List<File> files) {

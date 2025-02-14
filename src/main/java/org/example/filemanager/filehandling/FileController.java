@@ -6,13 +6,11 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class FileController {
     public File chosenFile = null;
-    public List<File> currentFiles = new ArrayList<>();
     private Path copyFileSourcePath = null;
     private PointerHistory pointerHistory;
     private File copyFile = null;
@@ -28,22 +26,6 @@ public class FileController {
         return pointerHistory.getPointer();
     }
 
-    public void setPointer(Path pointer) {
-        pointerHistory.setPointer(pointer);
-    }
-
-    public void removePointersAtIndex(int index) {
-        pointerHistory.removePointersAtIndex(index);
-    }
-
-    public Path getPointerForward() {
-        return pointerHistory.getPointerForward();
-    }
-
-    public Path getPointerBackwards() {
-        return pointerHistory.getPointerBackwards();
-    }
-
     public List<Path> getPointerHistory() {
         return pointerHistory.getPointerHistory();
     }
@@ -52,22 +34,45 @@ public class FileController {
         return folderFiles.getFilesFrom(path);
     }
 
+    public List<File> getFilesFromPointer() {
+        return getFilesFrom(getPointer());
+    }
 
-    public void makeDirectory(Path path, String directoryName) {
+    public void navigateTo(Path pointer) {
+        if (pointer != null && !pointer.endsWith("\\")) {
+            pointer = Paths.get(pointer + "\\");
+        }
+        pointerHistory.setPointer(pointer);
+
+        if (!pointer.equals(pointerHistory.getPointerForward())) {
+            int index = getPointerHistory().indexOf(getPointer());
+            pointerHistory.removePointersAtIndex(index);
+        }
+    }
+
+    public void navigateBackwards() {
+        pointerHistory.setPointer(pointerHistory.getPointerBackwards());
+    }
+
+    public void navigateForwards() {
+        navigateTo(pointerHistory.getPointerForward());
+    }
+
+    public void makeDirectoryInCurrentFolder(String directoryName) {
         try {
-            Files.createDirectory(Paths.get(path + "\\" + directoryName));
+            Files.createDirectory(Paths.get(getPointer() + "\\" + directoryName));
         } catch (FileAlreadyExistsException e) {
-            System.out.println("Ordner existiert bereits: " + path.toAbsolutePath());
+            System.out.println("Ordner existiert bereits: " + getPointer().toAbsolutePath());
         } catch (Exception e) {
             System.err.println("Fehler: " + e.getMessage());
         }
     }
 
-    public void makeFile(Path path, String fileName) {
+    public void makeFileInCurrentFolder(String fileName) {
         try {
-            Files.createFile(Paths.get(path + "\\" + fileName));
+            Files.createFile(Paths.get(getPointer() + "\\" + fileName));
         } catch (FileAlreadyExistsException e) {
-            System.out.println("Ordner existiert bereits: " + path.toAbsolutePath());
+            System.out.println("Ordner existiert bereits: " + getPointer().toAbsolutePath());
         } catch (Exception e) {
             System.err.println("Fehler: " + e.getMessage());
         }
@@ -110,13 +115,13 @@ public class FileController {
         }
     }
 
-    public List<File> search(SearchMethod searchMethod, String searchQuery, int depth) {
+    public List<File> search(SearchMethod searchMethod, String searchQuery, int depth, Path sourceDirectory) {
         FileSearch fileSearch;
         if (searchMethod == SearchMethod.NIO) {
             fileSearch = new FileSearchWithNio();
         } else {
             fileSearch = new FileSearchRecursive(this);
         }
-        return fileSearch.search(pointerHistory.getPointer(), searchQuery, depth);
+        return fileSearch.search(sourceDirectory, searchQuery, depth);
     }
 }

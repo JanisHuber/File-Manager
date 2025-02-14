@@ -15,30 +15,30 @@ public class SceneActions {
 
     @FXML
     public void navigateBackwards() {
-        fileController.setPointer(fileController.getPointerBackwards()); //todo
+        fileController.navigateBackwards();
         resetChosenFile();
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     @FXML
     public void navigateForwards() {
-        fileController.setPointer(fileController.getPointerForward());
+        fileController.navigateForwards();
         resetChosenFile();
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     @FXML
     public void createNewFolder() {
         String directoryName = NameDialog.directoryName();
-        fileController.makeDirectory(fileController.getPointer(), directoryName);
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        fileController.makeDirectoryInCurrentFolder(directoryName);
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     @FXML
     public void createNewFile() {
         String fileName = NameDialog.fileName();
-        fileController.makeFile(fileController.getPointer(), fileName);
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        fileController.makeFileInCurrentFolder(fileName);
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
 
@@ -53,7 +53,7 @@ public class SceneActions {
                 fileController.renameFile(fileController.chosenFile.getPath(), newFileName);
             }
         }
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     @FXML
@@ -61,7 +61,7 @@ public class SceneActions {
         if (fileController.chosenFile != null) {
             fileController.deleteFile(fileController.chosenFile.getPath());
         }
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     @FXML
@@ -69,13 +69,13 @@ public class SceneActions {
         if (fileController.chosenFile != null) {
             fileController.copyFile(fileController.chosenFile.getPath());
         }
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     @FXML
     public void pasteFile() {
         fileController.pasteFile();
-        sceneController.updateTreeView(fileController.getFilesFrom(fileController.getPointer()));
+        sceneController.updateTreeView(fileController.getFilesFromPointer());
     }
 
     private void resetChosenFile() {
