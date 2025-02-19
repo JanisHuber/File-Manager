@@ -48,6 +48,7 @@ public class FileItemActions {
             fileController.getChosenFile().get().setIsChosenTo(false);
             fileController.setChosenFile(null);
             sceneController.updateTreeView(fileController.getFilesFromPointer());
+            sceneController.hidePreview();
         });
     }
 
@@ -56,6 +57,7 @@ public class FileItemActions {
         fileController.getChosenFile().ifPresent(f -> f.setIsChosenTo(true));
         fileController.navigateTo(file.getPath());
         sceneController.updateTreeView(fileController.getFilesFromPointer());
+        sceneController.showPreview(file);
     }
 
     private void openFile(File file) {

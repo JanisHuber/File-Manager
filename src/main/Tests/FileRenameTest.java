@@ -37,13 +37,13 @@ public class FileRenameTest {
     void test() {
         File file = new File("test", 0, "test", Paths.get("test"), false);
         File file2 = new File("test", 0, "test", Paths.get("test"), false);
-        assertEquals(true, file.equals(file2));
+        assertEquals(file, file2);
     }
 
     @Test
     void test2() {
         test test = new test("test");
         test test2 = new test("test");
-        assertEquals(true, test.equals(test2));
+        assertEquals(test, test2);
     }
 }

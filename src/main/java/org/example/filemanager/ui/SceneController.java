@@ -2,7 +2,10 @@ package org.example.filemanager.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.example.filemanager.filehandling.File;
 import org.example.filemanager.filehandling.FileController;
@@ -28,6 +31,12 @@ public class SceneController {
     private CheckBox lockedPath;
     @FXML
     private CheckBox recursiveSearch;
+    @FXML
+    private ImageView previewImage;
+    @FXML
+    private Label TitleLabel;
+    @FXML
+    private Label DateLabel;
 
     @FXML
     public void onBackwardsButtonClicked() {
@@ -83,6 +92,26 @@ public class SceneController {
                 updateTreeView(searchFiles);
             }
         });
+    }
+
+    public void showPreview(File file) {
+        String path = file.getPath() + "\\" + file.getName();
+        if (path.toLowerCase().endsWith(".jpg") || path.toString().toLowerCase().endsWith(".png") || path.toString().toLowerCase().endsWith(".jpeg")) {
+            java.io.File file2 = new java.io.File(path.toString());
+            previewImage.setImage(new Image(file2.toURI().toString()));
+        } else if (file.isDirectory()) {
+            previewImage.setImage(new Image(getClass().getResourceAsStream("/Icons/folder.png")));
+        } else {
+            previewImage.setImage(new Image(getClass().getResourceAsStream("/Icons/file.png")));
+        }
+        TitleLabel.setText(file.getName());
+        DateLabel.setText(file.getDate());
+    }
+
+    public void hidePreview() {
+        previewImage.setImage(null);
+        TitleLabel.setText("");
+        DateLabel.setText("");
     }
 
     @FXML
